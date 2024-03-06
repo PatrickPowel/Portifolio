@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Adriano Rosa</title>
+    <description>Analista Programador Backend e Frontend - Web Developer FullStack</description>
+    <link>https://adrianorosa.com/</link>
+    <atom:link href="https://adrianorosa.com/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Mon, 14 May 2018 19:46:10 -0300</pubDate>
+    <lastBuildDate>Mon, 14 May 2018 19:46:10 -0300</lastBuildDate>
+    <generator>Jekyll v2.2.0</generator>
+    
+      <item>
+        <title>Setup Virtual Server com NGINX</title>
+        <description>&lt;p&gt;Para quem esta acostumado com Apache, já deve ter configurado ou ouvido falar sobre &lt;a href=&quot;https://httpd.apache.org/docs/current/vhosts/&quot;&gt;Virtual Host&lt;/a&gt;, eu cheguei a explicar a &lt;a href=&quot;/blog/webserver/o-que-e-um-virtual-host-server-block-ou-virtual-server.html&quot;&gt;diferença entre Server Block/Virtual Server(Nginx) e Virtual Host(Apache)&lt;/a&gt;. Bem, isso também é possível no Nginx, mas aqui chamamos de &lt;code&gt;Server Block&lt;/code&gt; ou &lt;code&gt;Virtual Server&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;A configuração no Nginx é feita dentro de blocks &lt;code&gt;{}&lt;/code&gt;, logo existem diversas diretivas. E para configurar um Virtual Server usamos a diretiva &lt;code&gt;server&lt;/code&gt;. Dentro dessa diretiva fazemos o setup de um Virtual Server.&lt;/p&gt;
+&lt;p&gt;Como o Nginx permite vários block no mesmo arquivo de configuração, nesse exemplo vou criar 3 Virtual Servers dentro do block &lt;code&gt;http&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;http {
+  # Virtual Server 1 (Site principal)
+  server {
+    listen      80;
+    server_name example.com www.example.com;
+    root /var/www/www.example.org
+    location / {
+        try_files $uri $uri/ =404;
+    }    
+  }
+  # Virtual Server 2 (CMS site)
+  server {
+    listen      80;
+    server_name admin.example.com;
+    root /var/www/admin.example.com
+    location / {
+        try_files $uri $uri/ =404;
+    }
+  }
+  # Virtual Server 3 (API site)
+  server {
+    listen      80;
+    server_name api.example.com;
+    root /var/www/api.example.com
+    location / {
+        try_files $uri $uri/ =404;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;virtual-host-no-ambiente-de-desenvolvimento-local&quot;&gt;Virtual Host no ambiente de desenvolvimento local&lt;/h3&gt;
+&lt;p&gt;No ambiente de desenvolvimento local também é necessário configurar o arquivo de &lt;code&gt;hosts&lt;/code&gt;, localizado em &lt;code&gt;/etc/hosts&lt;/code&gt; em sistemas Unix ou em &lt;code&gt;%SystemRoot%\System32\drivers\etc\hosts&lt;/code&gt; no Windows.&lt;/p&gt;
+&lt;p&gt;No arquivo de &lt;code&gt;hosts&lt;/code&gt; é necessário adicionar um roteamento para que o domínio que estamos testando seja apontado para o nosso servidor local.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;127.0.0.1 example.com www.example.com
+127.0.0.1 admin.example.com
+127.0.0.1 api.example.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Concluído todas as configurações no webserver e arquivo de &lt;code&gt;hosts&lt;/code&gt;, agora é necessário reiniciar o nginx para alterações terem efeito.&lt;/p&gt;
+&lt;h4 id=&quot;linux&quot;&gt;Linux&lt;/h4&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;sudo service nginx reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&quot;osx&quot;&gt;OSX&lt;/h4&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;sudo nginx -s reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;conclusão&quot;&gt;Conclusão&lt;/h3&gt;
+&lt;p&gt;Com o Nginx percebemos como é fácil o setup de um Virtual Server, o modo de configuração em block permite maior flexibilidade no setup de um ou vários webserver, talvez por isso que eu prefiro Nginx ao invés do Apache, não só por essa questão mais também por outras questão de performance.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 14 Aug 2016 00:00:00 -0300</pubDate>
+        <link>https://adrianorosa.com/blog/nginx/setup-server-block-virtual-host-com-nginx.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/nginx/setup-server-block-virtual-host-com-nginx.html</guid>
+        <category>blog</category>
+        <category>nginx</category>
+      </item>
+      <item>
+        <title>O que é um Virtual Host, Server Block ou Virtual Server?</title>
+        <description>&lt;p&gt;&lt;strong&gt;Virtual Host (Apache)&lt;/strong&gt; ou &lt;strong&gt;Server Block / &lt;a href=&quot;/blog/nginx/setup-server-block-virtual-host-com-nginx.html&quot;&gt;Virtual Server (Nginx)&lt;/a&gt;&lt;/strong&gt;, em configurações de um webserver, refere-se a uma prática de servir mais de um site no mesmo servidor. Um Virtual Host pode ser baseado em IP, ou seja, diferentes IPs servindo vários sites no mesmo server, ou ainda baseado em nome de domínio, ou seja, vários domínios servindo no mesmo server.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;O termo Virtual Host é normalmente conhecido no Apache, no Nginx a mesma prática é chamada de Server Block ou Virtual Server, pois um Virtual Server é configurado dentro da diretiva &lt;code&gt;server&lt;/code&gt; block.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;apache-virtual-host&quot;&gt;Apache Virtual Host&lt;/h2&gt;
+&lt;p&gt;A configuração de um Virtual Host no Apache é relativamente simples:&lt;/p&gt;
+&lt;h3 id=&quot;name-based&quot;&gt;Name-based&lt;/h3&gt;
+&lt;p&gt;Virtual Host baseado em nome é mais simples pois o server vai servir diferentes sites usando o mesmo endereço IP.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&amp;lt;VirtualHost *:80&amp;gt;
+    ServerName www.example.com
+    ServerAlias example.com 
+    DocumentRoot &amp;quot;/www/domain&amp;quot;
+&amp;lt;/VirtualHost&amp;gt;
+&amp;lt;VirtualHost *:80&amp;gt;
+    ServerName other.example.com
+    DocumentRoot &amp;quot;/www/otherdomain&amp;quot;
+&amp;lt;/VirtualHost&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;ip-based&quot;&gt;Ip-based&lt;/h3&gt;
+&lt;p&gt;Virtual Host baseado em IPs requer setup extra de DNS para que funcione corretamente, geralmente configurar name-based é mais simples por conta disso, e a configuração no Apache é assim:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&amp;lt;VirtualHost 172.20.30.40:80&amp;gt;
+  DocumentRoot &amp;quot;/www/vhosts/www1&amp;quot;
+  ServerName www1.example.com
+&amp;lt;/VirtualHost&amp;gt;
+&amp;lt;VirtualHost 172.20.30.50:80&amp;gt;
+  DocumentRoot &amp;quot;/www/vhosts/www2&amp;quot;
+  ServerName www2.example.org
+&amp;lt;/VirtualHost&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;nginx-virtual-host-(server-block-/-virtual-server)&quot;&gt;Nginx Virtual Host (Server Block / Virtual Server)&lt;/h2&gt;
+&lt;p&gt;No nginx configurar um Virtual Host é muito mais simples, é possível definir um Virtual Host ip-based ou name-based ou ambos no mesmo server block, veja como fica a configuração:&lt;/p&gt;
+&lt;h3 id=&quot;name-based&quot;&gt;Name-based&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;server {
+  listen      80;
+   server_name example.net www.example.net;
+   root /var/www/site1
+   ...
+}
+server {
+  listen      80;
+  server_name example.com www.example.com;
+  root /var/www/site2
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Nesse exemplo acima o webserver determina o host de acordo com request e faz o roteamento para o server de destino.&lt;/p&gt;
+&lt;h3 id=&quot;ip-based-ou-mixed&quot;&gt;Ip-based ou mixed&lt;/h3&gt;
+&lt;p&gt;No mesmo Server Block podemos definir um Virtual Server para ambos ip-based e name-based, veja só:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;server {
+  listen      192.168.1.1:80;
+  server_name example.org www.example.org;
+  ...
+}
+server {
+  listen      192.168.1.2:80;
+  server_name example.com www.example.com;
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;mais-detalhes&quot;&gt;Mais detalhes&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://httpd.apache.org/docs/current/vhosts/&quot;&gt;https://httpd.apache.org/docs/current/vhosts/&lt;/a&gt;&lt;br&gt;
+&lt;a href=&quot;https://nginx.org/en/docs/http/request_processing.html&quot;&gt;https://nginx.org/en/docs/http/request_processing.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sun, 14 Aug 2016 00:00:00 -0300</pubDate>
+        <link>https://adrianorosa.com/blog/webserver/o-que-e-um-virtual-host-server-block-ou-virtual-server.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/webserver/o-que-e-um-virtual-host-server-block-ou-virtual-server.html</guid>
+        <category>blog</category>
+        <category>webserver</category>
+      </item>
+      <item>
+        <title>Composer lock file</title>
+        <description>&lt;p&gt;Devo ou não fazer o commit do arquivo &lt;code&gt;composer.lock&lt;/code&gt;. Quando um ou vários packages é instalado como dependência em seu projeto, o Composer vai atualizar as informações de cada package no arquivo &lt;code&gt;composer.lock&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Ao fazer o commit do arquivo &lt;code&gt;composer.lock&lt;/code&gt;, e sempre que utilizar o comando &lt;code&gt;composer install&lt;/code&gt;, o &lt;a href=&quot;https://getcomposer.org&quot;&gt;&lt;strong&gt;Composer&lt;/strong&gt;&lt;/a&gt; vai então instalar as versões exatas definidos anteriormente no seu projeto.&lt;/p&gt;
+&lt;p&gt;Por isso é importante fazer o commit do arquivo &lt;code&gt;composer.lock&lt;/code&gt; para garantir que as dependências de seu projeto sejam sempre as mesmas, isso vai evitar inconsistências e possíveis erros.&lt;/p&gt;
+&lt;h3 id=&quot;o-que-acontece-seu-eu-não-fazer-o-commit-do-composer.lock&quot;&gt;O que acontece seu eu não fazer o commit do &lt;code&gt;composer.lock&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Mesmo que esteja trabalhando um projeto sem a colaboração de outros developers pode acontecer inconsistências nas dependências do seu projeto.&lt;/p&gt;
+&lt;p&gt;Imagine o seguinte cenário onde você instalou o seguinte package como dependência, isso em seu ambiente de desenvolvimento.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&amp;quot;require&amp;quot;: {
+  &amp;quot;league/flysystem-aws-s3-v3&amp;quot;: &amp;quot;^1.0&amp;quot;
+},
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Quando você publicar seu projeto no ambiente de produção ou até mesmo em executá-lo em outro local de desenvolvimento, tipicamente você vai executar o comando:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;composer install 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Como não vai existir o arquivo &lt;code&gt;composer.lock&lt;/code&gt; na raiz do projeto, o Composer então vai instalar a versão mais recente do package &lt;code&gt;league/flysystem-aws-s3-v3&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;Até aqui tudo bem, mas digamos que alguns dias após o início do desenvolvimento do seu projeto a versão &lt;code&gt;v1.2.0&lt;/code&gt; do package &lt;code&gt;league/flysystem-aws-s3-v3&lt;/code&gt; foi lançado, então quando você instalar as dependências ao invés de obter a versão &lt;code&gt;v1.0.0&lt;/code&gt;, que foi testado no ambiente de desenvolvimento, será instalado a versão &lt;code&gt;v1.2.x&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;Nesse momento que surge o problema! Se por ventura, alguma mudança no package teve algum &lt;em&gt;breaking changes&lt;/em&gt; seu projeto pode estar com algum tipo de bug.&lt;/p&gt;
+&lt;p&gt;Por isso é fundamental fazer o commit do &lt;code&gt;composer.lock&lt;/code&gt; sempre que desejar manter a consistência e instalar as versões exatas de suas dependências em seu projeto.&lt;/p&gt;
+&lt;h3 id=&quot;em-que-situação-não-é-necessário-comitar-composer.lock&quot;&gt;Em que situação não é necessário &lt;em&gt;comitar&lt;/em&gt; &lt;code&gt;composer.lock&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;As vezes, é desnecessário &lt;em&gt;comitar&lt;/em&gt; &lt;code&gt;composer.lock&lt;/code&gt; quando estiver desenvolvendo uma library.&lt;/p&gt;
+&lt;h3 id=&quot;mais-detalhes&quot;&gt;Mais detalhes&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file&quot;&gt;https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sun, 26 Jun 2016 00:00:00 -0300</pubDate>
+        <link>https://adrianorosa.com/blog/composer/composer-lock-files.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/composer/composer-lock-files.html</guid>
+        <category>blog</category>
+        <category>composer</category>
+      </item>
+      <item>
+        <title>Nginx CORS com múltiplos domínios</title>
+        <description>&lt;p&gt;&lt;strong&gt;CORS&lt;/strong&gt; (Cross-origin resource sharing) ou (compartilhamento de recursos de origem cruzada) é um mecanismo que permite que os recursos de acesso restrito (por exemplo, fontes) em uma página web possa ser acessado a partir de outro domínio de origem do qual o recurso foi originado. &lt;a href=&quot;https://en.wikipedia.org/wiki/Cross-origin_resource_sharing&quot;&gt;Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;como-posso-definir-cors-com-nginx&quot;&gt;Como posso definir CORS com Nginx&lt;/h3&gt;
+&lt;p&gt;Implementar CORS é simples basta enviar o seguinte Header:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Access-Control-Allow-Origin: *
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Para implementar &lt;strong&gt;CORS&lt;/strong&gt; de uma maneira mais refinada quando um virtual host manipula mais de um domínio é bem simples.&lt;/p&gt;
+&lt;p&gt;Basicamente o que precisa ser feito é utilizar um Regex para capturar a lista de domínios que deseja enviar.&lt;/p&gt;
+&lt;p&gt;Esse exemplo é útil quando seu vhost serve webfonts para múltiplos domínios:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;location ~* \.(?:ttf|ttc|otf|eot|woff|woff2)$ {
+   if ( $http_origin ~* (https?://(.+\.)?(domain1|domain2|domain3)\.(?:net|com)$) ) {
+      add_header &amp;quot;Access-Control-Allow-Origin&amp;quot; &amp;quot;$http_origin&amp;quot;;
+   }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Nesse exemplo os domínios que poderão acessar os recursos deste server serão:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;domain1.net&lt;/li&gt;
+&lt;li&gt;domain1.com&lt;/li&gt;
+&lt;li&gt;domain2.net&lt;/li&gt;
+&lt;li&gt;domain2.com&lt;/li&gt;
+&lt;li&gt;domain3.net&lt;/li&gt;
+&lt;li&gt;domain3.com&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 09 Dec 2015 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/nginx/nginx-cors-multiplos-dominios.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/nginx/nginx-cors-multiplos-dominios.html</guid>
+        <category>blog</category>
+        <category>nginx</category>
+      </item>
+      <item>
+        <title>Alterar public path no Laravel 5</title>
+        <description>&lt;p&gt;No Laravel 5 me deparei com um problema comum que vem sendo &lt;a href=&quot;https://github.com/laravel/framework/issues/7108&quot;&gt;discutido&lt;/a&gt; largamente por outros desenvolvedores, acontece que em versões anteriores do Laravel existia um arquivo &lt;code&gt;bootstrap/paths.php&lt;/code&gt; muito util quando queríamos alterar os nomes de alguns dos diretórios padrão usado pelo framework, como por exemplo, a pasta webroot &lt;code&gt;public&lt;/code&gt; que as vezes precisa se chamar &lt;code&gt;public_html&lt;/code&gt;, &lt;code&gt;www&lt;/code&gt; ou &lt;code&gt;web&lt;/code&gt; dependendo do tipo de configuração do seu webserver ou do serviço de hospedagem que utiliza.&lt;/p&gt;
+&lt;p&gt;Pois bem, esse arquivo &lt;code&gt;bootstrap/paths.php&lt;/code&gt; foi removido no Laravel v5.0, e agora não é mais possível definir esse tipo de configuração no framework por padrão, ou seja, se quiser alterar um desses diretórios terá que criar alguns hacks ou da maneira mais fácil que é extender a classe &lt;code&gt;Illuminate\Foundation\Application&lt;/code&gt; e redefinir o método &lt;code&gt;publicPath()&lt;/code&gt; ou qualquer outro path que deseja modificar ex. para o diretório &lt;code&gt;storage&lt;/code&gt; deverá redefinir o método &lt;code&gt;storagePath()&lt;/code&gt;, após criar a classe dentro do namespace do seu projeto também é necessário alterar o arquivo &lt;code&gt;bootstrap/app.php&lt;/code&gt; onde a classe é instanciada sendo assim essa alteração será refletida em toda aplicação.&lt;/p&gt;
+&lt;p&gt;Passo 1: Estender a classe Application:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;MyApp&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Application&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;\Illuminate\Foundation\Application&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;publicPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;basePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DIRECTORY_SEPARATOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;public_html&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Passo 2: Atualizar o arquivo &lt;code&gt;bootstrap/app.php&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;MyApp\Application&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;realpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__DIR__&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;/../&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Existe também outras maneiras de alterar os paths, se não quiser extender a class &lt;code&gt;Application&lt;/code&gt;, exemplo redefinir helper function &lt;code&gt;public_path()&lt;/code&gt; no seu index.php, como no exemplo logo abaixo retirado do &lt;a href=&quot;https://laracasts.com/discuss/channels/general-discussion/where-do-you-set-public-directory-laravel-5&quot;&gt;fórum laracasts&lt;/a&gt;, mas não recomendo esse outro tipo de hack:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-php&quot; data-lang=&quot;php&quot;&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;public_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;realpath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__DIR__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sat, 09 May 2015 00:00:00 -0300</pubDate>
+        <link>https://adrianorosa.com/blog/laravel/alterar-public-path-no-laravel-5.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/laravel/alterar-public-path-no-laravel-5.html</guid>
+        <category>blog</category>
+        <category>laravel</category>
+      </item>
+      <item>
+        <title>Acesse arquivos remoto com SFTP e FileZilla</title>
+        <description>&lt;p&gt;&lt;strong&gt;FTP&lt;/strong&gt; (&lt;a href=&quot;http://en.wikipedia.org/wiki/File_Transfer_Protocol&quot;&gt;File Transfer Protocol&lt;/a&gt;) é o protrocolo muito utilizado para transferência de arquivos, porém o &lt;a href=&quot;/blog/seguranca/ftp-e-nao-e-seguro-saiba-por-que.html&quot;&gt;uso do FTP não é seguro&lt;/a&gt;, a maneira mais segura para transferência de arquivos entre um computador local e servidor remoto é através do SFTP (Secure Shell File Transfer Protocol).&lt;/p&gt;
+&lt;p&gt;Embora a semelhança com nome FTP, o SFTP possui características diferentes, uma delas é o tipo de autenticação e transferência de arquivos que é baseado em SSH Keys uma método com criptografia de chave pública, o que torna a comunicação entre um computador local e o servidor remoto totalmente segura.&lt;/p&gt;
+&lt;p&gt;A maneira para conectar a um servidor SFTP é um pouco diferente do FTP pois você deve utilizar sua SSH keys para estabelecer a autenticação com o servidor remoto. Neste post explico passo a passo como configurar uma conexão com servidor SFTP utilizando o FileZilla.&lt;/p&gt;
+&lt;h3 id=&quot;requisitos&quot;&gt;Requisitos&lt;/h3&gt;
+&lt;p&gt;Para configurar uma conexão SFTP com FileZilla você precisa:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-windows.html&quot;&gt;Criar sua SSH Key-pair&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Endereço do servidor remoto devidamente configurado com SSH e SFTP.&lt;/li&gt;
+&lt;li&gt;FileZilla.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;passo-1:-adicionar-private-key-ao-filezilla&quot;&gt;Passo 1: Adicionar Private Key ao FileZilla&lt;/h2&gt;
+&lt;p&gt;O FileZilla precisa saber onde esta sua chave privada (&lt;em&gt;Private Key&lt;/em&gt;) criada anteriormente para ser usada toda vez que for estabelecer uma conexão com o servidor SFTP. Para dizer ao FileZilla o caminho até sua chave:&lt;/p&gt;
+&lt;div class=&quot;img-wrap text-center&quot;&gt;
+&lt;img src=&quot;/images/2015/01/sftp-filezilla-1.jpg&quot; alt=&quot;Tela de configurações do FileZilla&quot; title=&quot;Tela de configurações do FileZilla&quot; class=&quot;img-thumbnail&quot; width=&quot;400&quot;&gt;
+&lt;span&gt;imagem 1: Tela de configurações do FileZilla&lt;/span&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Abra o FileZilla.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vá ao menu superior &lt;strong&gt;&lt;em&gt;Editar &amp;gt; Configurações&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Na tela de configurações &lt;small&gt;imagem 1&lt;/small&gt; expanda o item &lt;strong&gt;&lt;em&gt;Conexão&lt;/em&gt;&lt;/strong&gt; e clique em &lt;strong&gt;&lt;em&gt;SFTP&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Clique no botão &lt;strong&gt;&lt;em&gt;Adicionar Arquivo de Chave&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Localize sua Private Key e clique &lt;strong&gt;&lt;em&gt;Abrir&lt;/em&gt;&lt;/strong&gt;, em seguida clique em &lt;strong&gt;&lt;em&gt;OK&lt;/em&gt;&lt;/strong&gt; na tela de configurações. &lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTA: O FileZilla suporta Private Keys no formato &lt;code&gt;.ppk&lt;/code&gt; Se sua Private Key é um arquivo no formato &lt;code&gt;.pem&lt;/code&gt; ou não foi gerada usando PuTTY o FileZilla exibirá uma janela de dialogo dizendo: &lt;em&gt;arquivo não esta no formato suportado pelo FileZilla&lt;/em&gt;, e ainda se você definiu um Passphrase para sua chave a seguinte mensagem também será exibida: &lt;em&gt;O arquivo esta protegido por senha deseja criar uma chave desprotegida no formato reconhecido&lt;/em&gt;. Se isso acontecer clique em &lt;strong&gt;&lt;em&gt;Sim&lt;/em&gt;&lt;/strong&gt; e digite sua senha se for o caso de ter definido Passphrase e depois salve e uma cópia da Private Key no formato &lt;code&gt;.ppk&lt;/code&gt; em algum lugar seguro no seu computador.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;passo-2:-criar-uma-conexão-sftp&quot;&gt;Passo 2: Criar uma conexão SFTP&lt;/h2&gt;
+&lt;p&gt;Agora que o FileZilla sabe o caminho de sua Private Key você precisa criar uma nova entrada no &lt;strong&gt;&lt;em&gt;Gerenciador de Sites&lt;/em&gt;&lt;/strong&gt; e informar os dados do servidor SFTP:&lt;/p&gt;
+&lt;div class=&quot;img-wrap text-center&quot;&gt;
+&lt;img src=&quot;/images/2015/01/sftp-filezilla-2.jpg&quot; alt=&quot;Tela Gerenciamento de Sites do FileZilla&quot; title=&quot;Tela Gerenciamento de Sites do FileZilla&quot; class=&quot;img-thumbnail&quot; width=&quot;400&quot;&gt;
+&lt;span&gt;imagem 2.1: Tela Gerenciamento de Sites do FileZilla&lt;/span&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Vá ao menu superior clique em &lt;strong&gt;&lt;em&gt;Arquivo &amp;gt; Gerenciamento de Sites&lt;/em&gt;&lt;/strong&gt; ou pressione &lt;strong&gt;&lt;em&gt;crtl+S&lt;/em&gt;&lt;/strong&gt; ou &lt;strong&gt;&lt;em&gt;cmd+S&lt;/em&gt;&lt;/strong&gt; no OSX.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Clique no botão &lt;strong&gt;&lt;em&gt;Novo Site&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Na guia &lt;strong&gt;&lt;em&gt;Geral&lt;/em&gt;&lt;/strong&gt; preencha os dados do servidor SFTP:  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Host&lt;/strong&gt;: Informe o endereço IP do servidor&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Porta&lt;/strong&gt;: geralmente esse valor é 22&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Protocolo&lt;/strong&gt;: selecione &lt;strong&gt;&lt;em&gt;SFTP - SSH File Transfer Protocol&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tipo de Login&lt;/strong&gt;: selecione &lt;strong&gt;&lt;em&gt;Normal&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Usuário&lt;/strong&gt;: informe seu nome usuário&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Senha&lt;/strong&gt;: deixe em branco pois não é necessário&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Clique em &lt;strong&gt;&lt;em&gt;Conectar&lt;/em&gt;&lt;/strong&gt;, e pronto se tudo ocorreu como previsto deverá visualizar a janela comum de transferência de arquivos:&lt;/p&gt;
+&lt;div class=&quot;img-wrap text-center&quot;&gt;
+&lt;img src=&quot;/images/2015/01/sftp-filezilla-3.jpg&quot; alt=&quot;Tela de transferência de arquivo via SFTP do FileZilla&quot; title=&quot;Tela de transferência de arquivo via SFTP do FileZilla&quot; class=&quot;img-thumbnail&quot; width=&quot;400&quot;&gt;
+&lt;span&gt;imagem 2.2: Tela de transferência de arquivo via SFTP do FileZilla&lt;/span&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 17 Jan 2015 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/seguranca/acesse-arquivos-remoto-com-sftp-e-filezilla.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/seguranca/acesse-arquivos-remoto-com-sftp-e-filezilla.html</guid>
+        <category>blog</category>
+        <category>seguranca</category>
+      </item>
+      <item>
+        <title>FTP não é seguro saiba por que</title>
+        <description>&lt;p&gt;&lt;strong&gt;FTP&lt;/strong&gt; (&lt;a href=&quot;http://en.wikipedia.org/wiki/File_Transfer_Protocol&quot;&gt;File Transfer Protocol&lt;/a&gt;) é um protocolo bem conhecido e vastamente usado para transferência de arquivos entre dois computadores, seu uso é feito principalmente em hospedagens de site para transferência de arquivos. Porém o uso de FTP não é seguro por diversas razões saiba por que.&lt;/p&gt;
+&lt;h3 id=&quot;como-funciona-o-ftp&quot;&gt;Como funciona o FTP&lt;/h3&gt;
+&lt;p&gt;O design do FTP permite conectar a outro computador remoto com autenticação de usuário e senha, ou também de forma anônima se o servidor for configurado para esse fim. Quando você abre uma nova conexão FTP usando um software client-server, como por exemplo o FileZilla, você digita seu login e senha e o endereço IP ou domínio do servidor, e seu software client-server envia através de comando suas credencias em texto plano para o servidor remoto que verifica se os dados de login estão corretos, e então cria-se uma sessão FTP entre os dois computadores, a partir daí é possível transferir arquivos para o servidor remoto e vice-versa.&lt;/p&gt;
+&lt;h3 id=&quot;e-por-que-ftp-é-inseguro?&quot;&gt;E por que FTP é inseguro?&lt;/h3&gt;
+&lt;p&gt;O uso do FTP é um grande risco de segurança porque a transferência de arquivos, tanto &lt;em&gt;upload&lt;/em&gt; quanto &lt;em&gt;download&lt;/em&gt;, são feitos sem encriptação, ou seja, a transmissão dos dados é feita pela rede em formato de texto plano o que significa que se alguém interceptar o pacote TCP durante a transmissão, método também conhecido como &lt;a href=&quot;http://en.wikipedia.org/wiki/Packet_analyzer&quot;&gt;Sniffing&lt;/a&gt;, dará ao hacker acesso à todas informações de seus arquivos e credencias colocando em risco seu servidor e computador local.&lt;/p&gt;
+&lt;p&gt;Além disso, existem &lt;a href=&quot;http://en.wikipedia.org/wiki/File_Transfer_Protocol#Security&quot;&gt;outras vulnerabilidades&lt;/a&gt; bem conhecidas deste protocolo.&lt;/p&gt;
+&lt;h3 id=&quot;qual-a-solução-seu-eu-uso-ftp&quot;&gt;Qual a solução seu eu uso FTP&lt;/h3&gt;
+&lt;p&gt;Se você ou sua empresa se preocupa com a segurança de suas informações a solução é bem simples &lt;strong&gt;NÃO USE FTP&lt;/strong&gt;, existem outros métodos conhecidos e de fácil implementação  como por exemplo o WinSCP e SFTP.&lt;/p&gt;
+&lt;h3 id=&quot;use-sftp-invés-do-ftp&quot;&gt;Use SFTP invés do FTP&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/SSH_File_Transfer_Protocol&quot;&gt;SFTP&lt;/a&gt; (Secure Shell File Transfer Protocol) é um protocolo parte do pacote OpenSSH. Embora a semelhança com nome FTP o SFTP tem seu design e recursos diferentes. Uma de suas vantagens é o método de autenticação baseado em SSH Key-pair, ou seja, não depende de usuário e senha e sua transmissão de dados é feita através de tunelamento SSH encriptada do inicio ao fim da conexão, o que significa que mesmo que alguém intercepte seus pacotes TCP estará impossibilitado de decifrar os dados transmitidos.&lt;/p&gt;
+&lt;h3 id=&quot;como-usar-o-sftp&quot;&gt;Como usar o SFTP&lt;/h3&gt;
+&lt;p&gt;O SFTP é baseado em SSH Key pair, então basicamente o que precisa:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Criar sua SSH Keys, mas isso pode ser diferente entre sistemas &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-windows.html&quot;&gt;Windows&lt;/a&gt; e &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-unix.html&quot;&gt;Unix&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Configurar seu servidor com SFTP ou solicitar junto ao seu provedor de hospedagem de sites se oferece este recurso, mas dificilmente você encontrará esse recurso em hospedagem de site compartilhada. O ideal é que tenha um VPS gerenciável onde possa ter total acesso à configuração, sendo assim será possível &lt;a href=&quot;/blog/linux/configurar-webserver-linux-ubuntu-php-e-apache-nginx.html#5.4-use-sftp-inv%C3%A9s-de-ftp&quot;&gt;configurar SFTP facilmente&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Utilizar um SFTP client, diversos softwares FTP client também oferece suporte para SFTP é o caso do &lt;a href=&quot;https://filezilla-project.org/&quot;&gt;FileZilla&lt;/a&gt;, veja &lt;a href=&quot;/blog/seguranca/acesse-arquivos-remoto-com-sftp-e-filezilla.html&quot;&gt;como configurar uma conexão com SFTP com FileZilla&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;conclusão&quot;&gt;Conclusão&lt;/h3&gt;
+&lt;p&gt;FTP é inseguro é deve ser evitado sempre que possível, o uso de alternativas seguras como SFTP, SCP e WinSCP deve ser usado em seu lugar. Se seu provedor de hospedagem não oferece este recurso procure alternativas como VPS ou migre para empresas que possibilitam essa configuração.&lt;/p&gt;
+</description>
+        <pubDate>Sat, 10 Jan 2015 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/seguranca/ftp-e-nao-e-seguro-saiba-por-que.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/seguranca/ftp-e-nao-e-seguro-saiba-por-que.html</guid>
+        <category>blog</category>
+        <category>seguranca</category>
+      </item>
+      <item>
+        <title>Criar SSH Key pair no Windows</title>
+        <description>&lt;p&gt;A maneira mais simples de criar SSH key no Windows é utilizando o PuTTY. O PuTTY é um programa de código aberto que emula um Terminal, semelhante ao Terminal do Linux, para estabelecer uma conexão SSH. PuTTY oferece o utilitário PuTTYGen no qual você deverá usar para criar sua chave.&lt;/p&gt;
+&lt;p&gt;Em ambientes Unix veja o post &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-unix.html&quot;&gt;Como criar SSH Key pair em sistemas UNIX&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Key Pair&lt;/em&gt;&lt;/strong&gt;, ou &lt;a href=&quot;/blog/seguranca/ssh-keys.html&quot;&gt;&lt;strong&gt;SSH Keys&lt;/strong&gt;&lt;/a&gt; ou ainda &lt;strong&gt;Chave Pública&lt;/strong&gt; consiste em duas chaves uma pública que deve ser instalada no servidor remoto, e a outra chave privada que fica salva no seu computador, as duas juntas permitem que você conecte de forma segura a um servidor remoto usando o protocolo SSH ou SFTP.&lt;/p&gt;
+&lt;h2 id=&quot;passo-1:-download-puttygen&quot;&gt;Passo 1: Download PuTTYgen&lt;/h2&gt;
+&lt;p&gt;Vá até o site &lt;a href=&quot;http://www.chiark.greenend.org.uk/%7Esgtatham/putty/download.html&quot;&gt;PuTTY&lt;/a&gt; faça o download do utilitário &lt;code&gt;PuTTYGen&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;passo-2:-criar-ssh-key&quot;&gt;Passo 2: Criar SSH Key&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Execute o &lt;code&gt;puttygen.exe&lt;/code&gt;, e log verá a janela &lt;code&gt;PuTTY Key Generator&lt;/code&gt; &lt;small&gt;imagem 2.1&lt;/small&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Na parte inferior da janela, no item &lt;em&gt;Parameters&lt;/em&gt; por padrão já estará selecionado o algoritmo &lt;code&gt;SSH-2 RSA&lt;/code&gt; e definido o número de bits &lt;code&gt;2048&lt;/code&gt;, esses parâmetros são o recomendado para gerar SSH Key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Para criar SSH Key clique no botão &lt;code&gt;Generate&lt;/code&gt;. E tenha certeza de movimentar o ponteiro do mouse logo a abaixo a barra de progresso até que seja finalizada.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;img-wrap text-center&quot;&gt;
+&lt;img src=&quot;/images/2014/12/putty-1.jpg&quot; alt=&quot;Tela PuTTY Key Generator&quot; title=&quot;Tela PuTTY Key Generator&quot; class=&quot;img-thumbnail&quot; width=&quot;400&quot;&gt;
+&lt;span&gt;imagem 2.1 Tela PuTTY Key Generator&lt;/span&gt;
+&lt;/div&gt;
+&lt;h2 id=&quot;passo-3:-complete-as-informações-e-salve-sua-ssh-key&quot;&gt;Passo 3: Complete as informações e salve sua SSH Key&lt;/h2&gt;
+&lt;p&gt;Na próxima tela, &lt;small&gt;imagem 3.1&lt;/small&gt; siga os passos:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Adicione um comentário para identificar sua Public Key ex. usuario@host.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Crie um Passphrase (recomendado). O Passphrase é como uma senha que precisa ser digitado cada vez que iniciar uma sessão SSH ou SFTP, o que torna sua SSH Key ainda mais segura.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Copie a Public Key para o servidor e salve em &lt;code&gt;authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTA: Para adicionar a sua chave pública na lista de chaves autorizadas é preciso ter acesso administrativo ao servidor no qual deseja estabelecer uma conexão SSH. Se você é usuário de um sistema onde esse acesso é restrito você deverá revelar sua chave pública para o responsável configurar e instalar para você. Lembre-se somente a chave pública deve ser revelada para terceiros.&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Por fim, salve sua Private Key em algum local seguro no seu computador.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;img-wrap text-center&quot;&gt;
+&lt;img src=&quot;/images/2014/12/putty-2.jpg&quot; alt=&quot;Gerando SSH keys com PuTTY&quot; title=&quot;Gerando SSH keys com PuTTY&quot; class=&quot;img-thumbnail&quot; width=&quot;400&quot;&gt;
+&lt;span&gt;imagem 3.1 Gerando SSH keys com PuTTY&lt;/span&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTA: PuTTY e OpenSSH usam diferentes formatos para Public Key. Sua Public Key deve começar com a linha: &lt;code&gt;ssh-rsa AAAAAAAB3.....&lt;/code&gt; se esse valor for algo como: &lt;code&gt;---- BEGIN SSH2 PUBLIC KEY ----&lt;/code&gt; .... esta errado.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Veja mais detalhes na &lt;a href=&quot;http://www.chiark.greenend.org.uk/%7Esgtatham/putty/docs.html&quot;&gt;documentação do PuTTY&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 18 Dec 2014 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/seguranca/como-criar-ssh-key-pair-windows.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/seguranca/como-criar-ssh-key-pair-windows.html</guid>
+        <category>blog</category>
+        <category>seguranca</category>
+      </item>
+      <item>
+        <title>Criar SSH Keys em sistemas UNIX</title>
+        <description>&lt;p&gt;&lt;strong&gt;&lt;em&gt;Key Pair&lt;/em&gt;&lt;/strong&gt;, ou &lt;a href=&quot;/blog/seguranca/ssh-keys.html&quot;&gt;&lt;strong&gt;SSH Keys&lt;/strong&gt;&lt;/a&gt; ou ainda &lt;strong&gt;Chave Pública&lt;/strong&gt; consiste em duas chaves uma pública que deve ser instalada no servidor remoto, e a outra chave privada que fica salva no seu computador, as duas juntas permitem que você conecte de forma segura a um servidor remoto usando o protocolo SSH ou SFTP.&lt;/p&gt;
+&lt;p&gt;Para criar sua SSH key em ambientes Unix siga os passos logo abaixo, se você é usuário Windows visite o post &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-windows.html&quot;&gt;como criar ssh key pair no windows&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;passo-1:-verifique-seu-já-possui-ssh-key&quot;&gt;Passo 1: Verifique seu já possui SSH Key&lt;/h2&gt;
+&lt;p&gt;Veja se já existe SSH keys no seu computador, em ambientes Unix pode ser encontrado em um desses diretórios &lt;code&gt;~/.ssh/identity&lt;/code&gt;, &lt;code&gt;~/.ssh/id_ecdsa&lt;/code&gt;, &lt;code&gt;~/.ssh/id_dsa&lt;/code&gt; ou &lt;code&gt;~/.ssh/id_rsa&lt;/code&gt;. Para verificar digite no terminal:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ls -al ~/.ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Dica: se você tiver uma nova instalação Mac OSX ou Linux, você não terá o diretório &lt;code&gt;~/.ssh&lt;/code&gt; criado ainda, esse diretório onde armazena suas chaves públicas e privadas será criado automaticamente no passo seguinte.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;passo-2:-criar-uma-nova-ssh-key&quot;&gt;Passo 2: Criar uma nova SSH Key&lt;/h2&gt;
+&lt;p&gt;Se ainda não tem sua SSH key deverá gerar uma usando o comando &lt;code&gt;ssh-keygen&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh-keygen -t rsa -b 4096 -C &amp;quot;seuemail@example.com&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Explicando o comando acima:  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Parâmetro &lt;code&gt;-t&lt;/code&gt; específica o tipo de chave nesse caso usamos o algoritmo &lt;code&gt;rsa&lt;/code&gt; para protocolo versão 2 outros possíveis valores são &lt;code&gt;rsa1&lt;/code&gt;, &lt;code&gt;dsa&lt;/code&gt; e &lt;code&gt;ecdsa&lt;/code&gt;.  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Parâmetro &lt;code&gt;-C&lt;/code&gt; adiciona um comentário à chave pública, é apenas uma maneira fácil de identificar a finalidade desta chave, o valor pode ser &lt;code&gt;user@host&lt;/code&gt;. &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Parâmetro &lt;code&gt;-b&lt;/code&gt; informa &lt;em&gt;key size&lt;/em&gt; ou total de bits. O padrão é &lt;code&gt;2048&lt;/code&gt;, geralmente esse valor já é o suficiente para sua chave se quiser mais segurança use o valor máximo &lt;code&gt;4096&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ATENÇÃO: Para chaves &lt;strong&gt;RSA&lt;/strong&gt; o valor mínimo é de &lt;code&gt;768&lt;/code&gt; bits, mas não crie sua chave com menos de &lt;code&gt;2048&lt;/code&gt; bits pois estudos apontam que é possível &lt;a href=&quot;http://www.techworld.com/news/security/rsa-1024-bit-private-key-encryption-cracked-3214360/&quot;&gt;craquear&lt;/a&gt; esses tipos de chaves.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;defina-passphrase&quot;&gt;Defina Passphrase&lt;/h3&gt;
+&lt;p&gt;O Passphrase é como uma senha e precisa ser digitado to vez que usar a chave para se conectar SSH, se você esquecer o Passphrase ou outra pessoa ter acesso à sua Private Key ficará impossibilitado de conectar ao servidor remoto. Caso não queira definir um Passphrase apenas deixe em branco, pressione enter duas vezes para finalizar.&lt;/p&gt;
+&lt;h2 id=&quot;passo-4:-copie-sua-chave-pública-para-o-servidor&quot;&gt;Passo 4: Copie sua chave pública para o servidor&lt;/h2&gt;
+&lt;p&gt;Após executar o comando para gerar SSH keys dois arquivos serão salvos no diretório &lt;code&gt;~/ssh&lt;/code&gt; por padrão os arquivos são &lt;code&gt;id_rsa&lt;/code&gt; e &lt;code&gt;id_rsa.pub&lt;/code&gt;, mas é possível criá-los com nomes e diretórios diferentes se for necessário. &lt;/p&gt;
+&lt;p&gt;A chave pública, cujo a extensão é &lt;code&gt;.pub&lt;/code&gt;, deve ser copiado para o servidor e o seu conteúdo é algo como:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh-rsa AAAAB3NzaC1yc2EAAAADAQA .....
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;A chave privada tem o seguinte conteúdo:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;-----BEGIN RSA PRIVATE KEY-----
+MIIJKQIBAAKCAgEAzpHUcAE5w5e49Qw2S4cp17OmsIc1D8yfNR7y/ZLsf0382zsw
+.....
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;e deve ter apenas permissão de leitura pelo seu usuário, altere usando o comando:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;chmod 400 ~/.ssh/id_rsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Com sua SSH key pair criada, é hora de copiar a chave pública para o servidor, se você não é o administrador do servidor remoto deverá enviar o conteúdo da chave pública para o responsável fazer isso.&lt;/p&gt;
+&lt;p&gt;No servidor remoto, usando um editor de sua preferencia adicione a chave pública ao arquivo &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt;, ou simplesmente utilize o comando:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;cat ~/.ssh/id_rsa.pub | ssh user@123.45.56.78 &amp;quot;mkdir -p ~/.ssh &amp;amp;&amp;amp; cat &amp;gt;&amp;gt;  ~/.ssh/authorized_keys&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;passo-5:-faça-um-teste-com-sua-ssh-key&quot;&gt;Passo 5: Faça um teste com sua SSH Key&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh user@123.456.789.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Se sua SSH key foi salva em um diretório diferente de &lt;code&gt;~/.ssh&lt;/code&gt; você deverá informar o diretório onde esta a chave para para ter sucesso na conexão com servidor.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh -i /diretorio/subpasta/sua_chave_privada user@123.456.789.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;passo-6:-bonus,-usuários-mac-osx&quot;&gt;Passo 6: Bonus, usuários Mac OSX&lt;/h2&gt;
+&lt;p&gt;Se você definiu um Passphrase, pode salvar esse valor na sua Keychain e assim evitar ter que digitar o passphrase sempre que for conectar ao servidor remoto. Para adicionar sua SSH key na Keychain use o comando &lt;code&gt;ssh-add&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh-add -K ~/.ssh/id_rsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Digite sua Passphrase e sua chave será armazena na Keychain.&lt;/p&gt;
+&lt;p&gt;Para visualizar a lista de chaves adicionadas ao &lt;code&gt;ssh-agent&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ssh-add -l
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Esse comando exibe o tamanho de bits de sua chave, footprint e o diretório da chave privada da seguinte forma:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;2048 ee:aa:11:11:bb:cc:gg:11:Ca:Fe:00:E1:49:30:8C:01 ~/.ssh/id_rsa (RSA)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;mais-informações-sobre-ssh-keys:&quot;&gt;Mais informações sobre SSH Keys:&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://help.ubuntu.com/community/SSH/OpenSSH/Keys&quot;&gt;https://help.ubuntu.com/community/SSH/OpenSSH/Keys&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 18 Dec 2014 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/seguranca/como-criar-ssh-key-pair-unix.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/seguranca/como-criar-ssh-key-pair-unix.html</guid>
+        <category>blog</category>
+        <category>seguranca</category>
+      </item>
+      <item>
+        <title>SSH Keys</title>
+        <description>&lt;p&gt;&lt;em&gt;Key Pair&lt;/em&gt;, ou SSH Keys ou ainda Chave Pública, é o meio de identificação entre seu computador e um servidor SSH usando método de autenticação &lt;strong&gt;chave de criptografia pública&lt;/strong&gt;. Uma de suas vantagens diferentemente do método tradicional com login e senha é que para autenticação com servidor remoto você não precisa enviar seu login e senha, e mesmo que uma pessoa mal intencionada intercepte sua transmissão de dados pela rede não poderá ter acesso à suas credencias impossibilitando roubo de seus dados de acesso. E também, usando SSH Keys para autenticação elimina drasticamente o risco de um hacker tentar adivinhar seu login e senha enviando centenas ou milhares de combinações aleatórias de login e senha para entrar no sistema, esse é um tipo de ataque comum em sistemas baseado em autenticação de login e senha chamado de &lt;em&gt;brute-force password&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Além de oferecer uma camada de segurança, autenticação por SSH keys pode ser ainda mais conveniente do que o método tradicional de autenticação por login e senha. Quando usado com o programa SSH Agent, SSH keys permite a conexão com um servidor, ou múltiplos servidores, sem a necessidade de ter que lembrar ou digitar sua senha e login para cada acesso.&lt;/p&gt;
+&lt;h2 id=&quot;como-funciona-ssh-keys&quot;&gt;Como funciona SSH keys&lt;/h2&gt;
+&lt;p&gt;SSH keys consiste em um par de chaves uma pública que deve ser instalada no servidor remoto, e uma outra chave privada que fica salva no seu computador. Somente você poderá ter acesso à chave privada, então tenha certeza de mantê-la salva em um lugar seguro em seu computador com as devidas permissões e uma boa Passphrase. As duas chaves juntas permitem que você conecte de forma segura a um servidor remoto usando o protocolo SSH ou SFTP.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTA: Para adicionar a sua chave pública na lista de chaves autorizadas é preciso ter acesso administrativo ao servidor no qual deseja estabelecer uma conexão SSH. Se você é usuário de um sistema onde esse acesso é restrito você deverá revelar sua chave pública para o responsável configurar e instalar para você. Lembre-se somente a chave pública deve ser revelada para terceiros.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;tipos-de-encriptação&quot;&gt;Tipos de encriptação&lt;/h2&gt;
+&lt;p&gt;O algoritmo usado para encriptar suas chaves pode ser &lt;code&gt;RSA1&lt;/code&gt;, &lt;code&gt;RSA&lt;/code&gt;, &lt;code&gt;DSA&lt;/code&gt; ou &lt;code&gt;ECDSA&lt;/code&gt;, porém o uso desses algoritmos depende da finalidade da sua chave e de recursos suportado pelo servidor SSH.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;RSA1&lt;/strong&gt; (Rivest-Shamir-Adleman) é um algoritmo para o protocolo SSH versão 1, seu uso é limitado a servidores que não suportam a versão recente SSH 2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;RSA&lt;/strong&gt; (Rivest-Shamir-Adleman) é o algoritmo para o protocolo SSH versão 2 o mais utilizado em servidores SSH e o mais seguro hoje em dia, possibilita autenticar e transmitir dados criptografados até o seu destino. Esse algoritmo é o &lt;strong&gt;RECOMENDADO&lt;/strong&gt; para sua chave SSH.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;DSA&lt;/strong&gt; (Digital Signature Algorithm) é um algoritmo que pode ser usado para gerar sua chave, porém DSA tem se tornado menos seguro nos últimos anos. Sua função é somente autenticar DSA não encripta ou decripta dados.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;ECDSA&lt;/strong&gt; é um algoritmo variante do DSA provê tamanho menor da sua chave, esses tipos de chaves são usado apenas para autenticação.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;key-size&quot;&gt;Key Size&lt;/h3&gt;
+&lt;p&gt;Key Size é o número de bits usado na criação da chave, esse número varia dependendo do algoritmo usado. &lt;/p&gt;
+&lt;p&gt;Para SSH keys &lt;strong&gt;RSA&lt;/strong&gt;, o tamanho minimo de bits é &lt;code&gt;768&lt;/code&gt; bits e o padrão é &lt;code&gt;2048&lt;/code&gt; bits. Você pode tornar sua chave ainda mais segura usando &lt;code&gt;4096&lt;/code&gt; bits.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTA: Para &lt;strong&gt;RSA&lt;/strong&gt; não é recomendado utilizar menos do que &lt;code&gt;2048&lt;/code&gt; bits. Geralmente &lt;code&gt;2048&lt;/code&gt; bits é considerado seguro.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;SSH keys &lt;code&gt;DSA&lt;/code&gt;, devem conter exatos 1024 bits.&lt;/p&gt;
+&lt;p&gt;SSH keys &lt;code&gt;ECDSA&lt;/code&gt;, aceita um dos três valores da curva elíptica: &lt;code&gt;256&lt;/code&gt;, &lt;code&gt;384&lt;/code&gt; ou &lt;code&gt;521&lt;/code&gt; bits.&lt;/p&gt;
+&lt;h2 id=&quot;criar-ssh-key-pair&quot;&gt;Criar SSH Key pair&lt;/h2&gt;
+&lt;p&gt;Para criar sua SSH keys você precisa ter o programa &lt;code&gt;ssh-keygen&lt;/code&gt; parte do pacote &lt;a href=&quot;http://www.openssh.com/&quot;&gt;OpenSSH&lt;/a&gt; encontrado apenas em sistemas Unix. Em distribuições do Linux e Mac OSX esse programa já vem instalado por padrão. Veja neste post &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-unix.html&quot;&gt;como criar SSH Keys em sistemas Unix&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;No Windows, o programa &lt;code&gt;ssh-keygen&lt;/code&gt; não existe. A maneira mais simples de criar sua chave é utilizando o &lt;a href=&quot;http://www.chiark.greenend.org.uk/%7Esgtatham/putty/&quot;&gt;PuTTY&lt;/a&gt;, PuTTY é um programa de código aberto que emula um Terminal, semelhante ao Terminal do Linux, para estabelecer uma conexão SSH. PuTTY oferece o utilitário &lt;code&gt;PuTTYGen&lt;/code&gt; no qual você deverá usar para criar sua chave. Veja neste post &lt;a href=&quot;/blog/seguranca/como-criar-ssh-key-pair-windows.html&quot;&gt;como criar sua SSH Key no Windows&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Alternativas como &lt;a href=&quot;https://www.itefix.net/copssh&quot;&gt;CopSSH&lt;/a&gt; pode ser usado no Windows ou se você usa GitHub o programa &lt;a href=&quot;https://windows.github.com/&quot;&gt;GitHub para Windows&lt;/a&gt; oferece o Git Shell como parte da instalação onde é possível criar SSH Keys usando o comando &lt;code&gt;ssh-keygen&lt;/code&gt; do mesmo modo em sistemas Unix.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 28 Nov 2014 00:00:00 -0200</pubDate>
+        <link>https://adrianorosa.com/blog/seguranca/ssh-keys.html</link>
+        <guid isPermaLink="true">https://adrianorosa.com/blog/seguranca/ssh-keys.html</guid>
+        <category>blog</category>
+        <category>seguranca</category>
+      </item>
+    
+  </channel>
+</rss>
